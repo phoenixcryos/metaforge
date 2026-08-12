@@ -16,6 +16,48 @@
 <div id="forge">
 <div class="wrap">
   <div class="left">
+    <div id="simple-entry" class="simple-entry">
+      <a href="#" id="to-simple">New to this? Answer 4 questions instead →</a>
+    </div>
+
+    <!-- ========== SIMPLE MODE ========== -->
+    <div id="simple-panel" class="simple-panel" style="display:none">
+      <div class="simple-head">
+        <strong>Simple Mode</strong>
+        <a href="#" id="to-advanced">← Back to the full form</a>
+      </div>
+
+      <div class="fg">
+        <label>1. What do you want the assistant to do?</label>
+        <div class="hint">Describe it the way you'd explain it to a new colleague on their first day. Two or three sentences is plenty.</div>
+        <textarea id="sq1" rows="4" placeholder="Every month I get about 40 supplier invoices as PDFs. I want the supplier name, invoice number, date and total pulled out so I can put them in a spreadsheet."></textarea>
+        <div class="presets" id="simple-presets"></div>
+      </div>
+
+      <div class="fg">
+        <label>2. What should you end up with?</label>
+        <div id="sq2" class="simple-opts"></div>
+      </div>
+
+      <div class="fg">
+        <label>3. Who's going to see or use the result?</label>
+        <div id="sq3" class="simple-opts"></div>
+      </div>
+
+      <div class="fg">
+        <label>4. Anything it must always do, or must never do? <span class="opt">(optional)</span></label>
+        <div class="hint">Leave blank if nothing comes to mind — we'll fill in sensible rules based on your answers.</div>
+        <textarea id="sq4" rows="2" placeholder="e.g. Never guess a number. If a field isn't present, leave it blank."></textarea>
+        <div id="simple-chips" class="chips"></div>
+      </div>
+
+      <div id="simple-review" class="simple-review" style="display:none"></div>
+
+      <button type="button" id="simple-go" class="primary">Generate prompt</button>
+    </div>
+
+    <!-- ========== ADVANCED MODE ========== -->
+    <div id="advanced-panel">
     <div class="presets" id="presets"></div>
 
     <div class="fg">
@@ -90,6 +132,7 @@
     </details>
 
     <button class="btn" id="go">⚡ Compile meta-prompt</button>
+    </div><!-- /advanced-panel -->
   </div>
 
   <div class="right" id="out">

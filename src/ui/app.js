@@ -263,3 +263,139 @@ $("tools").addEventListener("change", () => { if(LAST) run(); });
 
 /* expose for console debugging + potential embedding */
 window.MetaForge = { compile, route, KB_VERSION, ENGINE_VERSION };
+
+/* ---- Simple Mode -------------------------------------------------------- */
+(function initSimple(){
+  if(!window.MetaForgeSimple) return;
+  const SM = window.MetaForgeSimple;
+  let chosenQ2 = null, chosenQ3 = null, activeChips = new Set();
+
+  // Build option radios
+  $("sq2").innerHTML = SM.Q2_OPTIONS.map(o =>
+    `<label data-id="${o.id}"><input type="radio" name="sq2" value="${o.id}"> <span>${o.label}</span></label>`
+  ).join("");
+  $("sq3").innerHTML = SM.Q3_OPTIONS.map(o =>
+    `<label data-id="${o.id}"><input type="radio" name="sq3" value="${o.id}"> <span>${o.label}</span></label>`
+  ).join("");
+
+  // Wire option selection
+  $("sq2").addEventListener("click", e => {
+    const lab = e.target.closest("label"); if(!lab) return;
+    chosenQ2 = lab.dataset.id;
+    [...$("sq2").children].forEach(l => l.classList.toggle("on", l.dataset.id === chosenQ2));
+    updateChips();
+    maybePreview();
+  });
+  $("sq3").addEventListener("click", e => {
+    const lab = e.target.closest("label"); if(!lab) return;
+    chosenQ3 = lab.dataset.id;
+    [...$("sq3").children].forEach(l => l.classList.toggle("on", l.dataset.id === chosenQ3));
+    updateChips();
+    maybePreview();
+  });
+
+  // Preset chips for Q1 (reuse existing presets)
+  $("simple-presets").innerHTML = Object.entries(presets)
+    .map(([k,p]) => `<button class="pchip" data-p="${k}">${p._label}</button>`).join("");
+  $("simple-presets").addEventListener("click", e => {
+    const b = e.target.closest(".pchip"); if(!b) return;
+    const p = presets[b.dataset.p];
+    $("sq1").value = p.task || "";
+    maybePreview();
+  });
+
+  function updateChips(){
+    const chips = [];
+    if(chosenQ2 === "code" && chosenQ3 === "just_me"){
+      chips.push("Explain each step like I've never done this", "Don't delete anything", "No extra software to install");
+    } else if(chosenQ2 === "code"){
+      chips.push("Don't delete anything", "No extra software to install");
+    } else if(chosenQ2 === "writing"){
+      chips.push("Plain English — no jargon", "Keep it under 400 words");
+    } else if(chosenQ2 === "list"){
+      chips.push("Never guess a number. If a field isn't present, leave it blank.");
+    }
+    $("simple-chips").innerHTML = chips.map(c =>
+      `<button type="button" data-c="${esc(c)}">${esc(c)}</button>`).join("");
+  }
+  $("simple-chips").addEventListener("click", e => {
+    const b = e.target.closest("button"); if(!b) return;
+    const c = b.dataset.c;
+    if(activeChips.has(c)){ activeChips.delete(c); b.classList.remove("on"); }
+    else { activeChips.add(c); b.classList.add("on"); }
+    maybePreview();
+  });
+
+  function maybePreview(){
+    if(!chosenQ2 || !chosenQ3 || !$("sq1").value.trim()) {
+      $("simple-review").style.display = "none";
+      return;
+    }
+    const { review } = SM.simpleToSpec({
+      q1: $("sq1").value, q2: chosenQ2, q3: chosenQ3,
+      q4: $("sq4").value, chips: [...activeChips]
+    });
+    $("simple-review").style.display = "block";
+    $("simple-review").innerHTML = review.map(r =>
+      `<div class="rv"><b>${esc(r.label)}:</b> ${esc(r.value)} <span class="why">— ${esc(r.reason)}</span></div>`
+    ).join("");
+  }
+  $("sq1").addEventListener("input", maybePreview);
+  $("sq4").addEventListener("input", maybePreview);
+
+  // Mode switching
+  function showSimple(){
+    $("simple-panel").style.display = "block";
+    $("advanced-panel").style.display = "none";
+    $("simple-entry").style.display = "none";
+  }
+  function showAdvanced(){
+    $("simple-panel").style.display = "none";
+    $("advanced-panel").style.display = "block";
+    $("simple-entry").style.display = "block";
+  }
+  $("to-simple").addEventListener("click", e => { e.preventDefault(); showSimple(); });
+  $("to-advanced").addEventListener("click", e => {
+    e.preventDefault();
+    // Hand partial answers to advanced form if any
+    if($("sq1").value.trim()) $("task").value = $("sq1").value;
+    showAdvanced();
+  });
+
+  // Generate from Simple Mode
+  $("simple-go").addEventListener("click", () => {
+    if(!$("sq1").value.trim()){ toast("Describe what you want done first"); $("sq1").focus(); return; }
+    if(!chosenQ2){ toast("Pick what you should end up with"); return; }
+    if(!chosenQ3){ toast("Pick who will see the result"); return; }
+
+    const { spec, review } = SM.simpleToSpec({
+      q1: $("sq1").value, q2: chosenQ2, q3: chosenQ3,
+      q4: $("sq4").value, chips: [...activeChips]
+    });
+
+    // Populate advanced form (so "show technical version" / back works)
+    $("task").value = spec.task;
+    $("deliverable").value = spec.deliverable;
+    $("domain").value = spec.domain;
+    $("model").value = spec.model;
+    $("consumer").value = spec.consumer;
+    setRisk(spec.risk);
+    $("constraints").value = spec.constraints;
+    $("audience").value = spec.audience;
+    $("evidence").value = spec.evidence || "";
+    $("untrusted").value = spec.untrusted || "";
+    $("tools").checked = !!spec.tools;
+    $("toolList").value = spec.toolList || "";
+    $("toolBudget").value = spec.toolBudget || "0";
+    if($("agentName")) $("agentName").value = spec.agentName || "";
+
+    LAST = compile(spec);
+    render(LAST);
+    // Keep user on simple panel so they see the review + output
+  });
+
+  // Esc returns to advanced
+  document.addEventListener("keydown", e => {
+    if(e.key === "Escape" && $("simple-panel").style.display !== "none") showAdvanced();
+  });
+})();

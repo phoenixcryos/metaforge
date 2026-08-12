@@ -78,16 +78,23 @@ improving"), CoT scaffolding on a reasoning model.
 
 ---
 
-## 4. Spec inference from a task description
+## 4. Spec inference from a task description — **partly done (Simple Mode)**
 
 **Problem.** The form asks for domain, consumer, and risk. Users guess.
 
-**Approach.** Infer defaults from the task text and show them as editable
-pre-fills with a visible "inferred" marker. Never silently decide — the point is
-to reduce typing, not to hide the decision.
+**Shipped (Simple Mode).** A four-question deterministic pre-filler
+(`src/ui/simple.js`) that asks only for task, deliverable-shape, audience, and
+optional constraints, then fills a complete spec for the existing `route()`.
+See `docs/SIMPLE_MODE.md`. Tools stay off; risk/untrusted only escalate; a
+review strip states every inference.
 
-**Done when:** for the six presets, inference reproduces the hand-authored spec
-fields ≥80% of the time.
+**Remaining.** Optional auto-inference on the advanced form (pre-fill domain/
+consumer/risk from task text with visible markers) without requiring the
+Simple Mode path.
+
+**Done when:** for the six presets, advanced-form inference reproduces the
+hand-authored spec fields ≥80% of the time *or* Simple Mode covers the
+beginner path sufficiently that advanced inference is low priority.
 
 ---
 

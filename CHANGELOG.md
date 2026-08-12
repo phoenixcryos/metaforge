@@ -9,6 +9,11 @@ future maintainer deciding whether the reasoning still holds.
 ## [Unreleased]
 
 ### Added
+- **Simple Mode** — four plain-English questions that deterministically fill a
+  complete spec and hand it to the existing `route()` + emitter. Entry link above
+  the advanced form; review strip shows every inference with its reason; tools
+  stay off; escalate-only lexicons for risk/untrusted/constraints. Zero new
+  dependencies. See `src/ui/simple.js`.
 - `src/engine/shape.js` — task-shape classification extracted from the router and
   rebuilt as a scored classifier over verb classes and structural frames. Returns
   `{shape, confidence, runnerUp, scores, rawScores}` instead of a bare label.
