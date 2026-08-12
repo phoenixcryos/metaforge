@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # No dependencies by design — nothing to install, nothing to cache.
+      - name: Verify zero-dependency invariant
+        run: |
+          if [ -d node_modules ]; then echo "::error::node_modules committed"; exit 1; fi
+          if grep -qE '"(dependencies|devDependencies)"\s*:\s*\{[^}]*[a-zA-Z]' package.json; then
+            echo "::error::package.json declares dependencies — see ADR-0001"; exit 1
+          fi
+
+      - name: Unit invariants
+        run: node test/run.js
+
+      # Gates on held-out accuracy, not tuning-set accuracy. See the header of
+      # test/shapes.js: the tuning number is 100% and means nothing.
+      - name: Shape classifier accuracy
+        run: node test/shapes.js
+
+      - name: Build
+        run: node build.js
+
+      - name: Bundle smoke test
+        run: node test/bundle.js
+
+      - name: Check dist is current
+        run: |
+          if ! git diff --quiet -- dist/; then
+            echo "::warning::dist/ differs from a fresh build; it is regenerated on deploy."
+          fi
+
+      - name: Artifact self-containment
+        run: |
+          if grep -qE '<(script|link)[^>]+(src|href)="https?:' dist/index.html; then
+            echo "::error::artifact references an external URL — see ADR-0001"; exit 1
+          fi

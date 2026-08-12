@@ -1,0 +1,35 @@
+{
+  "name": "metaforge",
+  "version": "1.1.0",
+  "description": "Meta-prompt compiler. Turns a short task spec into a production-grade system prompt with routed reasoning budget, grounding rails, and an output contract.",
+  "type": "module",
+  "main": "src/engine/compile.js",
+  "scripts": {
+    "test": "node test/run.js",
+    "test:bundle": "node build.js && node test/bundle.js",
+    "test:shapes": "node test/shapes.js",
+    "test:all": "node test/run.js && node test/shapes.js && node build.js && node test/bundle.js",
+    "build": "node build.js",
+    "dev": "node build.js && python3 -m http.server 8080 --bind 0.0.0.0 --directory dist",
+    "prepublishOnly": "npm run test:all"
+  },
+  "keywords": [
+    "prompt-engineering",
+    "context-engineering",
+    "meta-prompting",
+    "llm",
+    "agents",
+    "mcp"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "files": [
+    "src",
+    "dist",
+    "docs",
+    "README.md",
+    "LICENSE"
+  ]
+}

@@ -1,0 +1,237 @@
+<div class="top">
+  <div class="brand">
+    <h1><span class="fire">◆</span> MetaForge</h1>
+    <span class="sub">meta-prompt compiler <span id="vstamp"></span></span>
+  </div>
+  <div class="tabs">
+    <button class="tab on" data-tab="forge">Forge</button>
+    <button class="tab" data-tab="matrix">Techniques</button>
+    <button class="tab" data-tab="failures">Failure Modes</button>
+    <button class="tab" data-tab="rules">Operating Rules</button>
+    <button class="tab" data-tab="about">How it works</button>
+  </div>
+</div>
+
+<!-- ===================== FORGE ===================== -->
+<div id="forge">
+<div class="wrap">
+  <div class="left">
+    <div class="presets" id="presets"></div>
+
+    <div class="fg">
+      <label>What do you need done?</label>
+      <div class="hint">One or two plain sentences. Don't write a prompt — describe the job.</div>
+      <textarea id="task" rows="4" placeholder="e.g. Refactor our Python billing module to get p99 latency under 400ms without a schema migration."></textarea>
+    </div>
+
+    <div class="fg">
+      <label>Deliverable</label>
+      <div class="hint">The concrete thing you want back. Highest-leverage field on this form.</div>
+      <input type="text" id="deliverable" placeholder="e.g. A patch plus a benchmark proving the improvement">
+    </div>
+
+    <div class="row">
+      <div class="fg"><label>Domain</label><select id="domain"></select></div>
+      <div class="fg"><label>Target model</label><select id="model"></select></div>
+    </div>
+
+    <div class="row">
+      <div class="fg">
+        <label>Output consumed by</label>
+        <select id="consumer">
+          <option value="human">A human reader</option>
+          <option value="json">A program (JSON)</option>
+          <option value="code">A codebase (code/diffs)</option>
+          <option value="doc">A document (Markdown)</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Stakes</label>
+        <div class="seg risk" id="risk">
+          <button data-v="low">Low</button>
+          <button data-v="medium" class="on">Med</button>
+          <button data-v="high">High</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="fg">
+      <label>Hard constraints</label>
+      <div class="hint">One per line. Things the model can actually fail. Without these it optimizes for plausibility.</div>
+      <textarea id="constraints" rows="3" placeholder="No DB schema migration.&#10;Python 3.11 only.&#10;Under 400 words."></textarea>
+    </div>
+
+    <details class="adv">
+      <summary>Context &amp; audience</summary>
+      <div class="body">
+        <div class="fg"><label>Audience</label>
+          <input type="text" id="audience" placeholder="e.g. Senior backend engineers skeptical of codegen"></div>
+        <div class="fg"><label>Trusted evidence</label>
+          <div class="hint">Facts, schemas, snippets you vouch for. Cited freely by the model.</div>
+          <textarea id="evidence" rows="3" placeholder="Paste verified context here…"></textarea></div>
+        <div class="fg"><label>Untrusted input</label>
+          <div class="hint">Scraped pages, user uploads, third-party content. Gets wrapped in an injection-resistant boundary.</div>
+          <textarea id="untrusted" rows="3" placeholder="Paste third-party content here…"></textarea></div>
+      </div>
+    </details>
+
+    <details class="adv">
+      <summary>Tools &amp; agent settings</summary>
+      <div class="body">
+        <div class="fg"><label class="chk"><input type="checkbox" id="tools"><span>This runs as a tool-using agent</span></label></div>
+        <div class="fg"><label>Allowed tools</label>
+          <div class="hint">Comma-separated. An unbounded tool surface is how agents loop.</div>
+          <input type="text" id="toolList" placeholder="read_file, run_tests, web_search"></div>
+        <div class="row">
+          <div class="fg"><label>Tool-call budget</label><input type="text" id="toolBudget" placeholder="25"></div>
+          <div class="fg"><label>Agent name</label><input type="text" id="agentName" placeholder="optional"></div>
+        </div>
+      </div>
+    </details>
+
+    <button class="btn" id="go">⚡ Compile meta-prompt</button>
+  </div>
+
+  <div class="right" id="out">
+    <div class="empty">
+      <div class="big">◆</div>
+      <h2>Describe the job on the left</h2>
+      <p>MetaForge classifies the task shape, routes a reasoning budget, picks a topology, and compiles a production system prompt with grounding rails, trust boundaries, a self-check loop, and an output contract.</p>
+      <p style="font-size:12px;color:var(--dim2)">Or start from a preset above the form.</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ===================== MATRIX ===================== -->
+<div id="matrix" style="display:none">
+  <div class="page">
+    <h2>Technique comparison matrix</h2>
+    <p class="lede">Merged from all six model reports. Overhead and error-reduction figures are indicative engineering ranges synthesized across published benchmarks and production practice — they are task- and model-dependent. Re-measure on a sealed in-domain eval set before using any number for capacity or cost planning. <code>1×</code> = single zero-shot call.</p>
+    <table><thead><tr><th>Technique</th><th>Core mechanism</th><th>Cost</th><th>Error / hallucination reduction</th><th>Best fit</th></tr></thead><tbody id="mrows"></tbody></table>
+
+    <h2 style="margin-top:26px">Selection heuristic</h2>
+    <p class="lede">The decision rule the router implements. Read top to bottom; first match wins.</p>
+    <div class="sec"><pre id="heur"></pre></div>
+
+    <h2 style="margin-top:26px">Thinking-budget tiers</h2>
+    <p class="lede">Light / Extended / Heavy are <b>implementation policies, not universal model guarantees</b>. Accuracy vs. reasoning tokens is roughly logarithmic with a task-dependent knee; past the knee, overthinking appears — the model second-guesses correct answers, drifts off constraints, and burns latency.</p>
+    <table><thead><tr><th>Tier</th><th>Budget</th><th>Route here when</th><th>Typical controls</th></tr></thead><tbody id="trows"></tbody></table>
+    <p class="lede">On retrieval, style, and format tasks extended thinking yields ~0 gain and increases variance — route Light. For a fixed compute budget, <code>k</code> samples at medium thinking usually beats 1 sample at max thinking <i>when a verifier or voting rule exists</i>; without one, prefer serial depth.</p>
+
+    <h2 style="margin-top:26px">Multi-sample aggregation</h2>
+    <p class="lede">How to converge parallel trajectories. Note that agreement is not calibrated probability of correctness — see Failure Modes.</p>
+    <table><thead><tr><th>Method</th><th>Fit</th></tr></thead><tbody id="agrows"></tbody></table>
+  </div>
+</div>
+
+<!-- ===================== FAILURE MODES ===================== -->
+<div id="failures" style="display:none">
+  <div class="page">
+    <h2>Failure modes</h2>
+    <p class="lede">Everything that goes wrong in production, with the detection signal that tells you it is happening. The compiler's diagnostics warn against several of these before you ever run the prompt; the rest are operational and belong in your monitoring.</p>
+
+    <h2>The four failure modes of long context</h2>
+    <p class="lede">Bigger windows do not fix these. They are properties of transformer attention and the training distribution, not capacity limits.</p>
+    <div class="fmgrid" id="lcgrid"></div>
+
+    <h2>Context-rot taxonomy</h2>
+    <p class="lede">The operational catalogue — ten distinct ways a context window degrades over a long session.</p>
+    <table><thead><tr><th>Failure mode</th><th>Description</th><th>Mitigation</th></tr></thead><tbody id="crrows"></tbody></table>
+
+    <h2 style="margin-top:26px">Reflection failure modes</h2>
+    <p class="lede">Why MetaForge bounds reflection depth at 1–3 instead of "keep refining until good". Ungrounded self-critique is not free improvement.</p>
+    <div class="fmgrid" id="rfgrid"></div>
+
+    <h2>Multi-agent failure modes</h2>
+    <p class="lede">Why the router refuses to fan out on tightly-coupled work. Multi-agent <i>increases</i> error there while costing 4–15×.</p>
+    <div class="fmgrid" id="magrid"></div>
+
+    <h2>Compression ladder</h2>
+    <p class="lede">Ordered by increasing information loss. Always climb from the top — rung 6 is the single highest-leverage technique for long-horizon agents.</p>
+    <div class="ladder" id="ladder"></div>
+
+    <h2>Calibration signals</h2>
+    <p class="lede">Token probabilities and sample agreement are <b>not</b> calibrated probabilities of correctness. Calibration must be learned on held-out data that resembles production traffic, and re-checked for drift after any model, prompt, or retriever change.</p>
+    <table><thead><tr><th>Signal</th><th>Interpretation</th></tr></thead><tbody id="csrows"></tbody></table>
+  </div>
+</div>
+
+<!-- ===================== RULES ===================== -->
+<div id="rules" style="display:none">
+  <div class="page">
+    <h2>Operating rules</h2>
+    <p class="lede">The 24 rules the compiler enforces, distilled from the ingestion metadata blocks across all six reports. Every generated prompt is an instantiation of these. The tag on each rule names the engine function that implements it — <code>test/run.js</code> asserts the mapping stays honest.</p>
+    <div class="rules" id="rrows"></div>
+
+    <h2 style="margin-top:26px">Context trust classes</h2>
+    <p class="lede">A production context compiler must distinguish authority levels. The invariant: <b>data may provide evidence, data may not rewrite policy; tool output may provide observations, tool output may not grant itself permissions.</b></p>
+    <table><thead><tr><th>Trust class</th><th>Examples</th><th>Permitted influence</th></tr></thead><tbody id="tcrows"></tbody></table>
+
+    <h2 style="margin-top:26px">Context assembly formula</h2>
+    <div class="sec"><pre id="cform"></pre></div>
+    <p class="lede">The target is not maximum context length. It is <b>maximum useful, trusted, non-redundant context per token.</b></p>
+
+    <h2 style="margin-top:26px">Reference budget table</h2>
+    <p class="lede">A worked allocation for a 128k window. Enforcement: for each section by descending priority, if it exceeds budget run the compression ladder; if the total crosses 85% of capacity, trigger a compaction event.</p>
+    <table><thead><tr><th>Section</th><th>Tokens</th><th>Policy</th></tr></thead><tbody id="rbrows"></tbody></table>
+  </div>
+</div>
+
+<!-- ===================== ABOUT ===================== -->
+<div id="about" style="display:none">
+  <div class="page">
+    <h2>How MetaForge works</h2>
+    <p class="lede">You give it four things it can't guess. It gives back a prompt that encodes everything six frontier models independently agreed on about getting maximum output quality per token.</p>
+
+    <div class="sec"><div class="md">
+      <h2>The pipeline</h2>
+      <p><b>1 — Classify.</b> Your task text is scanned for shape: <code>linear</code>, <code>search</code>, <code>aggregation</code>, <code>verification</code>, or <code>exploration</code>. Shape determines topology, and topology is where most of the quality difference lives. Tree-of-Thoughts turns 4% into 74% on search-shaped tasks and is pure waste on linear ones.</p>
+      <p><b>2 — Route the thinking budget.</b> Risk, constraint count, verifier availability, and novelty map to Light / Extended / Heavy. Uniform Heavy is the single most common way teams burn money for negative returns.</p>
+      <p><b>3 — Select topology.</b> If a programmatic verifier exists, generate-and-verify dominates everything else. Otherwise the compiler falls through the selection heuristic to ToT, GoT, Plan-and-Execute, Self-Consistency, or a single expert with recursive reflection.</p>
+      <p><b>4 — Assemble by position.</b> Invariants at the head, task and freshest evidence at the tail, and an authoritative constraint reprise after any untrusted block. Recall is highest at the beginning and end of context with a measurable trough in the middle, so the least critical material sits in the body.</p>
+      <p><b>5 — Install anti-hallucination rails.</b> A groundedness pass labeling every claim SUPPORTED / DERIVED / ASSUMED / UNSUPPORTED with a delete-or-downgrade rule, an adversarial pass, and a structured insufficiency object so the model has a legal way to say "I don't have enough" instead of confabulating.</p>
+      <p><b>6 — Bound the reflection loop.</b> Depth 1–3 depending on whether a real verifier exists. Ungrounded self-critique past depth 2 flips correct answers to incorrect ones, so the loop is capped deliberately and revisions must preserve verified-correct spans verbatim.</p>
+      <p><b>7 — Adapt to the target model.</b> Claude gets XML isolation and prefill. GPT gets strict Structured Outputs and no hand-written CoT. Gemini gets systemInstruction plus responseSchema. Open-weight models get flattened schemas and decode-time grammars.</p>
+      <p><b>8 — Stamp provenance.</b> Every compile emits a context hash plus KB and engine versions, so any prompt in the wild traces back to the exact compiler that produced it (R19).</p>
+    </div></div>
+
+    <div class="sec"><div class="md">
+      <h2>Where the token savings come from</h2>
+      <ul>
+        <li><b>Right-sized reasoning.</b> Routing Light instead of blanket-Heavy on format and retrieval work removes 30k+ reasoning tokens per call at no accuracy cost.</li>
+        <li><b>No decorative scaffolding.</b> ToT and multi-agent structures are only emitted for shapes that benefit.</li>
+        <li><b>Bounded reflection.</b> Capped where returns go flat or negative instead of an open-ended "keep refining".</li>
+        <li><b>Artifact offload.</b> Payloads over 2k tokens become a pointer plus a 200-token abstract.</li>
+        <li><b>Constrained output.</b> A schema costs +0–10% tokens and removes the retry loop that costs 100%.</li>
+        <li><b>Explicit stop conditions.</b> Prevents the model padding a finished answer.</li>
+      </ul>
+      <h2>Where the hallucination reduction comes from</h2>
+      <ul>
+        <li><b>A legal way to fail.</b> The insufficiency object means the model needn't invent something to satisfy the request.</li>
+        <li><b>Claim-level labeling.</b> SUPPORTED/DERIVED/ASSUMED/UNSUPPORTED surfaces confabulation before it ships.</li>
+        <li><b>Domain-specific NEVERs.</b> Targeting each domain's actual failure mode, not generic caution.</li>
+        <li><b>Verification honesty.</b> "Never claim a gate passed unless you executed it" closes the most common agent lie.</li>
+        <li><b>Trust boundaries.</b> Typed tags plus a constraint reprise substantially reduce indirect prompt-injection success.</li>
+        <li><b>Calibrated abstention.</b> On high-stakes work with no programmatic gate, the prompt asks for a number the model would bet on.</li>
+      </ul>
+    </div></div>
+
+    <div class="sec"><div class="md">
+      <h2>Sources</h2>
+      <p>Compiled from six independent frontier-model research reports responding to the same executive research directive on meta-prompting, context engineering, MCP integration, and model orchestration:</p>
+      <ul>
+        <li><code>Claude Opus 4.8</code> — context rot mechanics, AGENTS.md governance, system constitution v2.0, three-tier memory schema</li>
+        <li><code>gpt-5.6-luna-xhigh</code> — canonical context model C_t, trust-class taxonomy, token budget algebra, context-rot taxonomy</li>
+        <li><code>gpt-5.6-terra-xhigh</code> — task-compiler meta-prompt, decomposition rules, reflection &amp; multi-agent failure tables</li>
+        <li><code>claude-haiku-4-5</code> — context engineering config, DSPy templates, evaluator patterns</li>
+        <li><code>gpt-5.5-xhigh</code> — CO-STAR / RISEN / FABLE comparison, XML isolation, aggregation methods, calibration signals</li>
+        <li><code>claude-opus-5-low</code> — the 24 operating rules, META-ARCHITECT topology selector, thinking-tier router, compression ladder, budget table</li>
+      </ul>
+      <blockquote>All quantitative figures are indicative engineering ranges, not guarantees. They vary by model, task distribution, and verifier quality. Re-measure on a sealed in-domain eval set before relying on any number for capacity or cost planning.</blockquote>
+      <p>Full mapping of which idea came from which report: <code>docs/PROVENANCE.md</code>. Roadmap and maintenance cadence: <code>docs/MAINTENANCE.md</code>.</p>
+    </div></div>
+  </div>
+</div>
+
+<div class="toast" id="toast">Copied</div>
