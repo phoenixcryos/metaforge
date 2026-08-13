@@ -9,6 +9,8 @@
     "test:bundle": "node build.js && node test/bundle.js",
     "test:shapes": "node test/shapes.js",
     "test:all": "node test/run.js && node test/shapes.js && node build.js && node test/bundle.js",
+    "eval": "node bin/eval.js",
+    "eval:smoke": "node bin/eval.js --set eval/fixtures/smoke.jsonl --routing-only",
     "build": "node build.js",
     "dev": "node build.js && python3 -m http.server 8080 --bind 0.0.0.0 --directory dist",
     "prepublishOnly": "npm run test:all"

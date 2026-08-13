@@ -4,8 +4,9 @@ MetaForge currently tells you what *should* work based on the research. It does
 not measure whether it did on **your** tasks. This document is the methodology for
 finding out — and the honest statement of what is not yet built.
 
-> **Status:** no eval harness ships today. This is the intended design.
-> See [ROADMAP](ROADMAP.md) item 2.
+> **Status:** P0 + P1 shipped (`bin/eval.js`, `eval/`). Routing-only mode and
+> dry-run arms work offline. Real model runs need a user-supplied script executor.
+> See [eval/README.md](../eval/README.md) and [ROADMAP](ROADMAP.md) item 2.
 
 ---
 

@@ -9,6 +9,10 @@ future maintainer deciding whether the reasoning still holds.
 ## [Unreleased]
 
 ### Added
+- **Eval harness (P0 + P1)** — `bin/eval.js` + `eval/`: JSONL tasks, three arms
+  (baseline / MetaForge / naive), `--routing-only` audit, echo executor, checker
+  registry (`json.schema`, `constraints.keyword`, `echo.pass`), CI95 arm table.
+  Zero new dependencies; no model API calls in core. See `eval/README.md`.
 - **Simple Mode** — four plain-English questions that deterministically fill a
   complete spec and hand it to the existing `route()` + emitter. Entry link above
   the advanced form; review strip shows every inference with its reason; tools

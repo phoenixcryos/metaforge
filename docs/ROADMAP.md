@@ -49,18 +49,28 @@ and why quoting it would be dishonest.
 
 ---
 
-## 2. Eval harness
+## 2. Eval harness — **partly done (P0 + P1)**
 
 **Problem.** [`EVALUATION.md`](EVALUATION.md) describes a methodology nobody can
 run without building it. Until it exists, every routing threshold is research-
 derived rather than measured.
 
-**Approach.** A `evals/` directory with: a task-set format (JSONL), a pluggable
-checker interface, a three-arm runner (baseline / MetaForge / naive), and a report
-that emits the record shape already documented. Programmatic checkers only in v1.
+**Shipped.** `bin/eval.js` + `eval/`: JSONL task format, three arms (baseline /
+MetaForge / naive), routing-only mode, echo executor, checker registry
+(`json.schema`, `constraints.keyword`, `echo.pass`), record shape + CI95 table.
+See [`eval/README.md`](../eval/README.md).
+
+```bash
+npm run eval -- --set eval/fixtures/smoke.jsonl --routing-only
+npm run eval -- --set eval/fixtures/smoke.jsonl --arms baseline,metaforge,naive
+```
+
+**Remaining (P2+).** Script executor against a real model API; 20–50 real tasks
+with programmatic checkers; ablation flags; release-gate automation on a sealed set.
 
 **Done when:** `npm run eval -- --set my-tasks.jsonl` produces a table of
-`task_success` and `tokens_per_successful_task` per arm with confidence intervals.
+`task_success` and `tokens_per_successful_task` per arm with confidence intervals
+**from real model runs** (not only echo).
 
 ---
 
