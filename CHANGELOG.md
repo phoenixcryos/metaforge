@@ -54,8 +54,11 @@ real increments, and full product/release documentation.
 - README/AGENTS/CONTRIBUTING accuracy pass: real artifact size (~150 KB), real
   repo URLs, all four test suites documented, the stale "no eval harness"
   limitation replaced with the shipped P0+P1 status.
-- CI now runs the UI wiring suite and an offline eval-harness smoke check, so
-  neither can silently rot.
+- CI additions — a step running `test/ui.js` and an offline eval-harness smoke
+  check — ship as `docs/ci-additions.patch`, applied with
+  `git apply docs/ci-additions.patch` by a maintainer whose token carries the
+  Actions `workflows` permission. The release automation token may not modify
+  `.github/workflows`, so the workflow itself is untouched in this release.
 
 ### Fixed
 - `docs/SIMPLE_MODE.md` rendered broken on GitHub — it had been pasted with

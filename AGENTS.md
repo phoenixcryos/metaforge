@@ -186,7 +186,7 @@ Append a dated entry at the end of every significant work block, newest first.
 - **What I completed**
   - Discovery report; created `PROJECT_STATE.md` with status, decisions, next actions.
   - Fixed `docs/SIMPLE_MODE.md` (was pasted with ~1,260 literal backslash escapes; rendered broken on GitHub).
-  - Added `test/ui.js` — 60 static DOM-wiring invariants; wired into `test:all` and CI (314 assertions total, all green), plus an offline eval-harness smoke step in CI.
+  - Added `test/ui.js` — 60 static DOM-wiring invariants; wired into `test:all` (314 assertions total, all green). The CI steps for it plus an offline eval smoke ship as `docs/ci-additions.patch` — the session token may not modify `.github/workflows`; a maintainer applies it with `git apply docs/ci-additions.patch`.
   - Wrote `docs/PRODUCT.md` (one-pager), `docs/DEMO.md` (walkthrough), `docs/RELEASE.md` (release checklist); accuracy pass on README/AGENTS/CONTRIBUTING/ROADMAP/MAINTENANCE.
   - Cut release v1.2.0: `ENGINE_VERSION` → 1.2.0, `KB_VERSION` stays 1.1.0, `SPEC_VERSION` 1, package 1.2.0; CHANGELOG section written with reasoning.
 - **What is still open**

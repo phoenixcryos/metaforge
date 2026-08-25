@@ -24,6 +24,9 @@ A stranger can:
 - [ ] `npm run eval:smoke` exit 0 — eval harness not rotten
 - [ ] CI green on the release branch, including the zero-dependency and
       artifact self-containment checks
+- [ ] One-time, v1.2.0: `git apply docs/ci-additions.patch` to add the UI-wiring
+      and eval-smoke steps to CI (requires a token with the Actions `workflows`
+      permission; the release automation token may not edit `.github/workflows`)
 
 ## 3. Manual checks (the ones CI cannot do)
 

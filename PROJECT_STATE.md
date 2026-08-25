@@ -26,7 +26,7 @@
 
 ## Next 3 actions
 
-1. **Merge the PR and cut the release tag** on the merge commit: `git tag -a v1.2.0 -m "v1.2.0"`, then confirm the Pages deploy workflow is green. Full checklist: [`docs/RELEASE.md`](docs/RELEASE.md).
+1. **Merge the PR, apply the CI patch, and tag**: `git apply docs/ci-additions.patch` (needs a token with the Actions `workflows` permission — the sandbox token refused to push workflow edits), then `git tag -a v1.2.0 -m "v1.2.0"` on the merge commit, and confirm the Pages deploy workflow is green. Full checklist: [`docs/RELEASE.md`](docs/RELEASE.md).
 2. **Manual browser pass** on `dist/index.html` (presets, Simple Mode incl. review strip, tabs, copy/download, clean console) — `test/ui.js` covers static wiring but not behavior; checklist in [`docs/MAINTENANCE.md`](docs/MAINTENANCE.md).
 3. **Run the eval harness P2 step when real tasks exist**: write a script executor against your model API and collect 20–50 real tasks with programmatic checkers (ROADMAP item 2), so routing thresholds stop being research-derived only. In parallel, schedule the next `models.js` dialect review (due ~2026-09 per MAINTENANCE cadence).
 
