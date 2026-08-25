@@ -45,12 +45,17 @@ npm run test:all
 
 That runs:
 - `test/run.js` — 226 invariant assertions across 1,440 compiled specs
+- `test/shapes.js` — shape-classifier accuracy, gated on a sealed holdout (never
+  quote the 100% tuning number; see the file header for why)
+- `test/ui.js` — 60 static DOM-wiring invariants (every `$("id")` resolves, tab
+  sets agree, spec fields have controls)
 - `build.js` — the ES-module → single-file transform
 - `test/bundle.js` — 28 assertions executing the *built artifact*
 
 **Never claim a gate passed unless you ran it and observed exit code 0.**
-If you changed anything under `src/ui/`, also load `dist/index.html` in a browser
-and confirm the console is clean — the unit tests cannot see DOM wiring.
+If you changed anything under `src/ui/`, `test/ui.js` covers static wiring, but
+also load `dist/index.html` in a browser and confirm the console is clean —
+static analysis cannot see behavior.
 
 ---
 
