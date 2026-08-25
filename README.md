@@ -14,8 +14,8 @@ Task spec  →  classify shape  →  route thinking budget  →  select topology
            →  adapt to target model  →  stamp provenance
 ```
 
-**Live:** `https://<user>.github.io/metaforge/` · **Single file:** `dist/index.html`
-(110 KB, zero dependencies, runs offline from `file://`)
+**Live:** `https://phoenixcryos.github.io/metaforge/` · **Single file:** `dist/index.html`
+(~150 KB, zero dependencies, runs offline from `file://`)
 
 ---
 
@@ -42,11 +42,12 @@ conditional, so MetaForge computes them. See [`docs/ARCHITECTURE.md`](docs/ARCHI
 ## Quick start
 
 ```bash
-git clone https://github.com/<user>/metaforge.git
+git clone https://github.com/phoenixcryos/metaforge.git
 cd metaforge
-npm run build     # writes dist/index.html — no npm install needed
-npm run dev       # build + serve on :8080
-npm run test:all  # 254 assertions, no test framework
+npm run build       # writes dist/index.html — no npm install needed
+npm run dev         # build + serve on :8080
+npm run test:all    # 314 assertions across four suites, no test framework
+npm run eval:smoke  # offline eval-harness routing audit
 ```
 
 There are **no runtime dependencies and no build dependencies.** `build.js` is
@@ -113,10 +114,14 @@ metaforge/
 │   │   ├── router.js         ★ classification + routing — read this first
 │   │   ├── sections.js       prompt section builders (wording lives here)
 │   │   └── compile.js        assembly, budget, diagnostics, provenance
-│   └── ui/                 styles.css · app.html · app.js
+│   └── ui/                 styles.css · app.html · app.js · simple.js (Simple Mode)
 ├── test/
 │   ├── run.js              226 invariant assertions over 1,440 compiled specs
+│   ├── shapes.js           shape-classifier harness, gated on a sealed holdout
+│   ├── ui.js               60 static DOM-wiring invariants
 │   └── bundle.js           28 assertions against the built artifact
+├── eval/                   arms, checkers, runners for measurement (bin/eval.js)
+├── research/               the six-report source corpus the KB is mined from
 ├── docs/                   see index below
 ├── build.js                ES modules → single-file HTML
 └── dist/index.html         the deliverable
@@ -126,11 +131,15 @@ metaforge/
 
 | Doc | Read it when |
 |---|---|
+| [`PRODUCT.md`](docs/PRODUCT.md) | You want the one-page product brief |
+| [`DEMO.md`](docs/DEMO.md) | You're presenting or onboarding someone |
 | [`ARCHITECTURE.md`](docs/ARCHITECTURE.md) | You want to understand or change the routing logic |
 | [`API.md`](docs/API.md) | You're embedding `compile()` in something else |
+| [`SIMPLE_MODE.md`](docs/SIMPLE_MODE.md) | You want the Simple Mode design rationale |
 | [`PROVENANCE.md`](docs/PROVENANCE.md) | You want to know which model report each idea came from |
 | [`MAINTENANCE.md`](docs/MAINTENANCE.md) | The meta shifted and you need to update the KB |
 | [`VERSIONING.md`](docs/VERSIONING.md) | You're cutting a release |
+| [`RELEASE.md`](docs/RELEASE.md) | You're running the release checklist |
 | [`EVALUATION.md`](docs/EVALUATION.md) | You want to prove a change actually helped |
 | [`CONTRIBUTING.md`](docs/CONTRIBUTING.md) | You're adding a domain, model, or technique |
 | [`ROADMAP.md`](docs/ROADMAP.md) | You're deciding what to build next |
@@ -177,15 +186,17 @@ These are deliberate and should survive refactors:
   from published benchmarks and production reports across different models and
   task distributions. Re-measure on your own sealed eval set before using any
   number for capacity or cost planning.
-- **Shape classification is keyword-based.** It is a fast heuristic that is right
-  most of the time, not a semantic classifier. Override by rewording the task or
-  changing the domain. Improving this is [ROADMAP](docs/ROADMAP.md) item 1.
+- **Shape classification is pattern-based, not semantic.** Measured on a sealed
+  holdout: 47% top-1, and 80–87% on the binary questions that actually change
+  routing. Those are the honest numbers; choosing a domain pins the shape with
+  certainty. See [`docs/EVALUATION.md`](docs/EVALUATION.md), and
+  [ROADMAP](docs/ROADMAP.md) item 1 for the improvement plan.
 - **Token counts are estimates** (`chars / 3.9`), not tokenizer output. Good enough
   for budget pressure warnings; do not bill against them.
-- **No eval harness yet.** MetaForge tells you what *should* work based on the
-  research. It does not yet measure whether it did on your tasks. See
-  [`docs/EVALUATION.md`](docs/EVALUATION.md) for the intended methodology and
-  [ROADMAP](docs/ROADMAP.md) item 2 for the plan.
+- **No real-model results ship with the tool.** The eval harness
+  (`npm run eval`) runs offline in routing-audit and dry-run modes; measuring
+  against an actual model requires a script executor you point at your own API.
+  Methodology: [`docs/EVALUATION.md`](docs/EVALUATION.md).
 - **Model dialects drift.** `src/kb/models.js` is the fastest-rotting file here.
   See [`docs/MAINTENANCE.md`](docs/MAINTENANCE.md) for the review cadence.
 

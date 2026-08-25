@@ -3,6 +3,12 @@
 Ordered by leverage — what most improves output quality per unit of work.
 Each item states the problem, the approach, and how you'd know it worked.
 
+> **Status snapshot, v1.2.0 (2026-08-25):** items 1, 2, and 4 have shipped their
+> first real increments (scored shape classifier with holdout gates; eval harness
+> P0+P1; Simple Mode). Everything else is open. The release also added
+> `test/ui.js`, `docs/PRODUCT.md`, `docs/DEMO.md`, and `docs/RELEASE.md`, which
+> were previously untracked gaps rather than roadmap items.
+
 ---
 
 ## 1. Semantic shape classification — **partly done (v1.1)**

@@ -1,6 +1,6 @@
 {
   "name": "metaforge",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Meta-prompt compiler. Turns a short task spec into a production-grade system prompt with routed reasoning budget, grounding rails, and an output contract.",
   "type": "module",
   "main": "src/engine/compile.js",
@@ -8,7 +8,8 @@
     "test": "node test/run.js",
     "test:bundle": "node build.js && node test/bundle.js",
     "test:shapes": "node test/shapes.js",
-    "test:all": "node test/run.js && node test/shapes.js && node build.js && node test/bundle.js",
+    "test:ui": "node test/ui.js",
+    "test:all": "node test/run.js && node test/shapes.js && node test/ui.js && node build.js && node test/bundle.js",
     "eval": "node bin/eval.js",
     "eval:smoke": "node bin/eval.js --set eval/fixtures/smoke.jsonl --routing-only",
     "build": "node build.js",

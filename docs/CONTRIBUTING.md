@@ -3,7 +3,7 @@
 Zero dependencies, zero build tooling. Clone, edit, `npm run test:all`.
 
 ```bash
-git clone https://github.com/<user>/metaforge.git
+git clone https://github.com/phoenixcryos/metaforge.git
 cd metaforge
 npm run test:all   # must pass before and after your change
 npm run dev        # build + serve on :8080
@@ -112,9 +112,11 @@ applies. Add an assertion in the "Diagnostics" group.
 ## Testing
 
 ```bash
-npm test          # unit invariants
-npm run test:bundle   # build + artifact smoke test
-npm run test:all      # both — this is the gate
+npm test              # unit invariants (226)
+npm run test:shapes   # shape-classifier accuracy, holdout-gated
+npm run test:ui       # static DOM-wiring invariants (60)
+npm run test:bundle   # build + artifact smoke test (28)
+npm run test:all      # all of the above — this is the gate
 ```
 
 Assert **invariants, not strings** ([ADR-0004](adr/0004-invariant-testing.md)):
