@@ -181,6 +181,22 @@ Full policy: [`docs/VERSIONING.md`](docs/VERSIONING.md).
 
 Append a dated entry at the end of every significant work block, newest first.
 
+### Handoff — 2026-08-25 (later) — Arena Agent Mode: PR #1 merged
+
+- **What happened** — user approved; PR #1 merged to `main` at merge commit
+  `c16c864`. CI on `main` after merge: green (14 s).
+- **Landmine discovered (pre-existing, not caused by this release)** —
+  `Deploy to GitHub Pages` fails at `actions/configure-pages` on every push to
+  `main` since 2026-08-12. Cause: Pages not enabled with source "GitHub Actions"
+  (DEPLOYMENT.md one-time setup was never run, or the repo moved since). The
+  integration token gets 403 from the Pages API, so a human must flip
+  **Settings → Pages → Source: GitHub Actions** and then re-run the workflow
+  (`gh run rerun 32808368173`). Nothing in the repo is broken.
+- **Still open** — tag `v1.2.0` on `c16c864`; `git apply docs/ci-additions.patch`
+  (needs workflows permission); manual browser pass per RELEASE.md §3.
+- **Run first** — `gh run list --branch main --limit 5` to confirm the deploy is
+  green after the Pages setting flip.
+
 ### Handoff — 2026-08-25 — Arena Agent Mode (v1.2.0 release session)
 
 - **What I completed**

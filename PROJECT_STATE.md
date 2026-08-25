@@ -3,8 +3,8 @@
 > Living document. Updated at the end of every significant work block.
 > Read this, [`AGENTS.md`](AGENTS.md), and [`docs/ROADMAP.md`](docs/ROADMAP.md) before changing anything.
 
-**Last updated:** 2026-08-25 — v1.2.0 release session
-**Branch:** `arena/01a03709-metaforge` (release work lands here, merges to `main`)
+**Last updated:** 2026-08-25 — v1.2.0 merged to `main` (PR #1, merge commit `c16c864`)
+**Branch:** `arena/01a03709-metaforge` (release work landed here; merged to `main`)
 
 ---
 
@@ -26,9 +26,29 @@
 
 ## Next 3 actions
 
-1. **Merge the PR, apply the CI patch, and tag**: `git apply docs/ci-additions.patch` (needs a token with the Actions `workflows` permission — the sandbox token refused to push workflow edits), then `git tag -a v1.2.0 -m "v1.2.0"` on the merge commit, and confirm the Pages deploy workflow is green. Full checklist: [`docs/RELEASE.md`](docs/RELEASE.md).
-2. **Manual browser pass** on `dist/index.html` (presets, Simple Mode incl. review strip, tabs, copy/download, clean console) — `test/ui.js` covers static wiring but not behavior; checklist in [`docs/MAINTENANCE.md`](docs/MAINTENANCE.md).
-3. **Run the eval harness P2 step when real tasks exist**: write a script executor against your model API and collect 20–50 real tasks with programmatic checkers (ROADMAP item 2), so routing thresholds stop being research-derived only. In parallel, schedule the next `models.js` dialect review (due ~2026-09 per MAINTENANCE cadence).
+1. **Enable GitHub Pages (maintainer-only, one-time), then re-run the deploy.** The
+   `Deploy to GitHub Pages` workflow has failed on `configure-pages` on every push
+   to `main` since 2026-08-12 — *pre-dating this release*. Cause: Pages for the repo
+   is not enabled with source "GitHub Actions" ([`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md)
+   one-time setup, step 2). Fix: **Settings → Pages → Build and deployment → Source:
+   GitHub Actions**, then re-run the failed workflow (`gh run rerun 32808368173`) or
+   push any commit to `main`. The automation token cannot do this — the Pages API
+   returns 403 for integration tokens here.
+2. **Tag the release**: `git tag -a v1.2.0 -m "v1.2.0" c16c864` on the merge commit,
+   then `git push origin v1.2.0` ([`docs/RELEASE.md`](docs/RELEASE.md) §6).
+3. **Apply the CI patch**: `git apply docs/ci-additions.patch` (needs a token with
+   the Actions `workflows` permission — the sandbox token is refused when editing
+   `.github/workflows`), then commit and push.
+4. **Manual browser pass** per [`docs/RELEASE.md`](docs/RELEASE.md) §3 — the only
+   check automation can't do.
+
+## Post-merge verification (2026-08-25)
+
+- PR #1: **merged** · merge commit `c16c8640bf74982da322a4bb217b0b6050f1e0b3`.
+- CI on `main` after merge: **success** (14 s).
+- Deploy workflow: **failed at `actions/configure-pages`** — repo setting issue,
+  not a code issue; see action 1 above. Same failure present on the previous
+  commit to `main` 12 days earlier.
 
 ---
 
