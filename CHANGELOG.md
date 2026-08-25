@@ -8,6 +8,16 @@ future maintainer deciding whether the reasoning still holds.
 
 ## [Unreleased]
 
+## [1.2.0] — 2026-08-25
+
+The first release cut since the modular restructure: Simple Mode for
+non-engineers, an honest measured shape classifier, the eval harness's first
+real increments, and full product/release documentation.
+
+**Versions:** `KB_VERSION` 1.1.0 (knowledge unchanged) · `ENGINE_VERSION`
+1.2.0 (routing behavior changed: shape classification rebuilt) · `SPEC_VERSION`
+1 · package 1.2.0.
+
 ### Added
 - **Eval harness (P0 + P1)** — `bin/eval.js` + `eval/`: JSONL tasks, three arms
   (baseline / MetaForge / naive), `--routing-only` audit, echo executor, checker
@@ -17,20 +27,40 @@ future maintainer deciding whether the reasoning still holds.
   complete spec and hand it to the existing `route()` + emitter. Entry link above
   the advanced form; review strip shows every inference with its reason; tools
   stay off; escalate-only lexicons for risk/untrusted/constraints. Zero new
-  dependencies. See `src/ui/simple.js`.
+  dependencies. See `src/ui/simple.js` and `docs/SIMPLE_MODE.md`.
 - `src/engine/shape.js` — task-shape classification extracted from the router and
   rebuilt as a scored classifier over verb classes and structural frames. Returns
   `{shape, confidence, runnerUp, scores, rawScores}` instead of a bare label.
 - `npm run test:shapes` — accuracy harness over three fixtures (60 tuning, 30
   dev, 30 held-out) with confusion matrix, per-miss listing, and calibration
   check. Gates CI on **held-out** numbers, never the tuning number.
+- `npm run test:ui` (`test/ui.js`) — 60 static DOM-wiring invariants: every
+  `$("id")` in `app.js` resolves to an `id` in `app.html`, dynamic lookup loops
+  drained against their literal arrays, tab array/buttons/sections checked as one
+  set, all 14 documented spec fields present as form controls, Simple Mode kept
+  DOM-free, and no external URLs or network calls in UI sources. This covers the
+  dead-button class of bug that previously required a manual browser pass.
 - Routing panel now states where shape came from — your domain selection or a
   read of your wording — and flags close calls with an amber `shape ?` pill.
+- Product and release materials: `docs/PRODUCT.md` (one-pager with honest
+  positioning and comparison points), `docs/DEMO.md` (walkthrough script),
+  `docs/RELEASE.md` (release checklist), `PROJECT_STATE.md` (living status doc
+  for multi-agent handoff).
 
 ### Changed
 - `route()` delegates shape to `resolveShape()`; the five last-match-wins regexes
   are gone. All six preset routings are unchanged, verified against the v1.0
   baseline table.
+- README/AGENTS/CONTRIBUTING accuracy pass: real artifact size (~150 KB), real
+  repo URLs, all four test suites documented, the stale "no eval harness"
+  limitation replaced with the shipped P0+P1 status.
+- CI now runs the UI wiring suite and an offline eval-harness smoke check, so
+  neither can silently rot.
+
+### Fixed
+- `docs/SIMPLE_MODE.md` rendered broken on GitHub — it had been pasted with
+  ~1,260 literal backslash escapes (`\#`, `\*`), making every header and code
+  span literal text. Escape artifacts stripped; content unchanged.
 
 ### Why this is documented as a partial success
 Held-out top-1 accuracy is **46.7%**, well short of the ≥90% the roadmap asked

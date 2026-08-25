@@ -1,6 +1,6 @@
 {
   "name": "metaforge",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Meta-prompt compiler. Turns a short task spec into a production-grade system prompt with routed reasoning budget, grounding rails, and an output contract.",
   "type": "module",
   "main": "src/engine/compile.js",

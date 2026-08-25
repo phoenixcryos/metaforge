@@ -139,7 +139,7 @@ Do not silently delete. Deletion loses the reason.
 Run before any release:
 
 ```bash
-npm run test:all          # 254 assertions
+npm run test:all          # 314 assertions: 226 unit + shape gates + 60 UI wiring + 28 bundle
 node build.js             # artifact builds
 # then, in a browser:     # load dist/index.html, console must be clean
 ```

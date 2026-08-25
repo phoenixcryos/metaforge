@@ -10,8 +10,8 @@
  *   prompt in the wild can be traced back to the exact compiler that made it.
  */
 export const KB_VERSION     = "1.1.0";
-export const ENGINE_VERSION = "1.1.0";
-export const SPEC_VERSION   = "1";   // shape of the input spec object
+export const ENGINE_VERSION = "1.2.0";   // shape classifier rebuilt (v1.2.0): resolveShape() replaces the regex chain
+export const SPEC_VERSION   = "1";       // shape of the input spec object
 
 export { techniques, selectionHeuristic } from "./techniques.js";
 export { models, tiers } from "./models.js";
