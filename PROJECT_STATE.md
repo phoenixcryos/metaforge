@@ -26,9 +26,9 @@
 
 ## Next 3 actions
 
-1. **Cut the release tag** after merge to `main`: `git tag -a v1.2.0 -m "v1.2.0"` on the merge commit (see [`docs/RELEASE.md`](docs/RELEASE.md) for the full checklist).
-2. **Manual browser pass** on `dist/index.html` (presets, Simple Mode, tabs, copy/download, clean console) — the automated tests cannot see DOM behavior; [`docs/MAINTENANCE.md`](docs/MAINTENANCE.md) has the checklist.
-3. **Schedule the next `models.js` dialect review** (due ~2026-09 per MAINTENANCE cadence) and, if real tasks are available, run the eval harness with a script executor (ROADMAP item 2, P2) so routing thresholds stop being research-derived only.
+1. **Merge the PR and cut the release tag** on the merge commit: `git tag -a v1.2.0 -m "v1.2.0"`, then confirm the Pages deploy workflow is green. Full checklist: [`docs/RELEASE.md`](docs/RELEASE.md).
+2. **Manual browser pass** on `dist/index.html` (presets, Simple Mode incl. review strip, tabs, copy/download, clean console) — `test/ui.js` covers static wiring but not behavior; checklist in [`docs/MAINTENANCE.md`](docs/MAINTENANCE.md).
+3. **Run the eval harness P2 step when real tasks exist**: write a script executor against your model API and collect 20–50 real tasks with programmatic checkers (ROADMAP item 2), so routing thresholds stop being research-derived only. In parallel, schedule the next `models.js` dialect review (due ~2026-09 per MAINTENANCE cadence).
 
 ---
 

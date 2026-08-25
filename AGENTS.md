@@ -174,3 +174,32 @@ Full policy: [`docs/VERSIONING.md`](docs/VERSIONING.md).
 | Why is it built this way? | `docs/adr/` |
 | What should I build next? | `docs/ROADMAP.md` |
 | How do I know it improved? | `docs/EVALUATION.md` |
+
+---
+
+## Handoff log
+
+Append a dated entry at the end of every significant work block, newest first.
+
+### Handoff — 2026-08-25 — Arena Agent Mode (v1.2.0 release session)
+
+- **What I completed**
+  - Discovery report; created `PROJECT_STATE.md` with status, decisions, next actions.
+  - Fixed `docs/SIMPLE_MODE.md` (was pasted with ~1,260 literal backslash escapes; rendered broken on GitHub).
+  - Added `test/ui.js` — 60 static DOM-wiring invariants; wired into `test:all` and CI (314 assertions total, all green), plus an offline eval-harness smoke step in CI.
+  - Wrote `docs/PRODUCT.md` (one-pager), `docs/DEMO.md` (walkthrough), `docs/RELEASE.md` (release checklist); accuracy pass on README/AGENTS/CONTRIBUTING/ROADMAP/MAINTENANCE.
+  - Cut release v1.2.0: `ENGINE_VERSION` → 1.2.0, `KB_VERSION` stays 1.1.0, `SPEC_VERSION` 1, package 1.2.0; CHANGELOG section written with reasoning.
+- **What is still open**
+  - Tag `v1.2.0` on `main` after the PR merges; confirm Pages deploy.
+  - Manual browser pass per `docs/RELEASE.md` §3 (automation cannot see DOM behavior).
+  - ROADMAP item 2 P2: real-model eval runs need a user-supplied script executor and 20–50 real tasks.
+  - Shape classifier holdout top-1 is 46.7% by design acceptance — quote the binaries (80–87%), never the tuning-set 100%.
+- **Exact next recommended action** — merge PR `arena/01a03709-metaforge` → `main`, tag `v1.2.0` on the merge commit, verify the deploy workflow.
+- **Landmines / non-obvious context**
+  - Never quote the 100% tuning-set shape number anywhere. `test/shapes.js` header explains why; `docs/EVALUATION.md` is the case study.
+  - The confidence gate was built, measured as strictly harmful, and removed. Do not re-add it without new evidence (see `docs/EVALUATION.md`).
+  - `dist/` is generated; `build.js` namespace shims are load-bearing (ADR-0005). Bundle byte-parity is asserted by `test/bundle.js`.
+  - Do not add dependencies of any kind; CI hard-fails on it (ADR-0001).
+- **Commands the next agent should run first**
+  - `npm run test:all` (expect 314 assertions green) and `npm run eval:smoke`.
+  - `git log --oneline -6` and read `PROJECT_STATE.md` for the next-3 list.
