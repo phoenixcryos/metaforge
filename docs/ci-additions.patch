@@ -1,0 +1,20 @@
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index b3f67d9..a5f6548 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -32,6 +32,15 @@ jobs:
+       - name: Shape classifier accuracy
+         run: node test/shapes.js
+ 
++      # Static DOM-wiring checks — catches the dead-button class of bug that
++      # the engine tests cannot see. See the header of test/ui.js.
++      - name: UI wiring invariants
++        run: node test/ui.js
++
++      # Exercises the eval harness end-to-end offline so it cannot silently rot.
++      - name: Eval harness smoke
++        run: node bin/eval.js --set eval/fixtures/smoke.jsonl --routing-only
++
+       - name: Build
+         run: node build.js
+ 
