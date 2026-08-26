@@ -202,6 +202,10 @@ These are deliberate and should survive refactors:
 
 ---
 
+## Author
+
+Designed and built by **Richard Sharp** ([@phoenixcryos](https://github.com/phoenixcryos)).
+
 ## License
 
 MIT. See [LICENSE](LICENSE).
