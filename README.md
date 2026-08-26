@@ -1,5 +1,7 @@
 # ◆ MetaForge
 
+![dependencies](https://img.shields.io/badge/dependencies-zero-brightgreen) ![license](https://img.shields.io/badge/license-MIT-blue) ![node](https://img.shields.io/badge/node-20%2B-green)
+
 **A meta-prompt compiler.** Describe a job in four fields; get back a production-grade
 system prompt with a routed reasoning budget, an appropriate reasoning topology,
 anti-hallucination rails, trust boundaries, executable verification gates, and a
@@ -16,6 +18,8 @@ Task spec  →  classify shape  →  route thinking budget  →  select topology
 
 **Live:** `https://phoenixcryos.github.io/metaforge/` · **Single file:** `dist/index.html`
 (~150 KB, zero dependencies, runs offline from `file://`)
+
+> **Does routing actually help?** The repo ships an evaluation methodology plus an offline harness (`bin/eval.js`, `eval/`) — routing-only and dry-run arms run today; live-model scoring is the next milestone. Methodology: [`docs/EVALUATION.md`](docs/EVALUATION.md).
 
 ---
 
@@ -212,3 +216,4 @@ MIT. See [LICENSE](LICENSE).
 
 Built from six frontier-model research reports; see [`docs/PROVENANCE.md`](docs/PROVENANCE.md)
 for full attribution.
+
