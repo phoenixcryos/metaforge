@@ -4,7 +4,7 @@
  * already in scope (bundled above by build.js) — this file only wires it to the page.
  */
 const $ = id => document.getElementById(id);
-const esc = s => (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const esc = s => (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
 let RISK = "medium", LAST = null;
 
 /* ---- version stamp ------------------------------------------------------ */
